@@ -168,6 +168,7 @@ jobs:
         run: ln -s /mnt/cache $HOME/
 
       - name: Downloading binary objects cache to $HOME/cache
+        if: ${{ github.repository_owner == 'kiwibrowser' }}
         run: rclone copy --fast-list --transfers=128 cache:kiwibrowser-ccache-${{ matrix.platform }} $HOME/cache
 
       - name: Checking available disk-space after downloading cache
