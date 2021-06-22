@@ -4,16 +4,6 @@ name: automatic build of apk
 # Controls when the action will run. Triggers the workflow on push or pull request events
 on:
   workflow_dispatch:
-  push:
-    paths-ignore:
-      - '*.md'
-      - '*.yml'
-    branches: [ master ]
-  pull_request:
-    paths-ignore:
-      - '*.md'
-      - '*.yml'
-    branches: [ master ]
 
 # A workflow run is made up of one or more jobs that can run sequentially or in parallel
 jobs:
@@ -25,7 +15,7 @@ jobs:
       fail-fast: false
       max-parallel: 4
       matrix:
-        platform: [arm, arm64, x86, x64]
+        platform: [arm64]
 
     # The GitHub Actions machines have a "slow disk", and a SSD "fast" disk.
     # However, there is not enough space to do all the processing on the SSD.
