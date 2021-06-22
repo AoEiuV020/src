@@ -1,0 +1,23 @@
+
+name: debugger
+env:
+    TZ: Asia/Shanghai
+
+on:
+  workflow_dispatch:
+
+jobs:
+  build:
+    runs-on: ubuntu-18.04
+
+    steps:
+    - name: Maximize build space
+      uses: easimon/maximize-build-space@master
+      with:
+        root-reserve-mb: 512
+        swap-size-mb: 1024
+        remove-dotnet: 'true'
+    - name: Setup Debug Session
+      env:   
+        GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+      uses: csexton/debugger-action@master
