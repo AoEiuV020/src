@@ -11,16 +11,32 @@ jobs:
     runs-on: ubuntu-18.04
 
     steps:
-    - name: start time
+    - name: env
       run: |
         echo "START_TIME=$(date '+%s')" >> $GITHUB_ENV
+        echo "CC=ccache clang -Qunused-arguments" >> $GITHUB_ENV
+        echo "CXX=ccache clang++ -Qunused-arguments" >> $GITHUB_ENV
 
-    - name: env
+    - name: push
       if: ${{ github.repository_owner == 'AoEiuV020' }}
       run: |
         echo "PUSH_TOKEN=${{ secrets.PUSH_TOKEN }}" >> $GITHUB_ENV
         git config --global user.email "aoeiuv020@gmail.com"
         git config --global user.name "AoEiuV020"
+
+    - name: download ccache
+      run: |
+        git clone https://AoEiuV020:$PUSH_TOKEN@github.com/AoEiuV020/kiwibrowser-ccache-arm64.git $HOME/cache
+
+    - name: Creating ccache configuration
+      run: |
+        mkdir -p $HOME/.ccache/
+        echo 'compiler_check = none' >> $HOME/.ccache/ccache.conf
+        echo "stats = false" >> $HOME/.ccache/ccache.conf
+        echo 'max_size = 20G' >> $HOME/.ccache/ccache.conf
+        echo "base_dir = $HOME" >> $HOME/.ccache/ccache.conf
+        echo "cache_dir = $HOME/cache" >> $HOME/.ccache/ccache.conf
+        echo "hash_dir = false" >> $HOME/.ccache/ccache.conf
 
     - name: Maximize build space
       run: |
@@ -52,17 +68,12 @@ jobs:
         sudo update-java-alternatives --set java-1.8.0-openjdk-amd64
         git clone --depth 1 "https://github.com/$GITHUB_REPOSITORY" src
         cd src
+        curl "https://omahaproxy.appspot.com/all" | grep -Fi "android,stable" | cut -f3 -d"," | awk '{split($0,a,"."); print "MAJOR=" a[1] "\nMINOR=" a[2] "\nBUILD=" a[3] "\nPATCH=" a[4]}' > chrome/VERSION
         sudo bash install-build-deps.sh --no-chromeos-fonts
         build/linux/sysroot_scripts/install-sysroot.py --arch=i386
         build/linux/sysroot_scripts/install-sysroot.py --arch=amd64
         keytool -genkey -v -keystore keystore.jks -alias dev -keyalg RSA -keysize 2048 -validity 10000 -storepass public_password -keypass public_password -dname "cn=Kiwi Browser (unverified), ou=Actions, o=Kiwi Browser, c=GitHub"
         gclient runhooks
-
-    - name: out
-      run: |
-        cd src
-        mkdir -p out
-        git clone https://AoEiuV020:$PUSH_TOKEN@github.com/AoEiuV020/kiwibrowser-arm64.git out/arm64
         gn gen out/arm64/
 
     - name: keepalive
