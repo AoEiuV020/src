@@ -12,11 +12,13 @@ jobs:
 
     steps:
     - name: Maximize build space
-      uses: easimon/maximize-build-space@master
-      with:
-        root-reserve-mb: 512
-        swap-size-mb: 1024
-        remove-dotnet: 'true'
+      run: |
+        sudo rm -rf /usr/share/dotnet
+        sudo rm -rf /usr/local/lib/android
+        sudo rm -rf /opt/ghc
+        sudo swapoff -a
+        sudo rm -f /mnt/swapfile
+
     - name: prepare
       run: |
         echo depot
