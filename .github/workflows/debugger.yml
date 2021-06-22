@@ -11,6 +11,17 @@ jobs:
     runs-on: ubuntu-18.04
 
     steps:
+    - name: start time
+      run: |
+        echo "START_TIME=$(date '+%s')" >> $GITHUB_ENV
+
+    - name: env
+      if: ${{ github.repository_owner == 'AoEiuV020' }}
+      run: |
+        echo "PUSH_TOKEN=${{ secrets.PUSH_TOKEN }}" >> $GITHUB_ENV
+        git config --global user.email "aoeiuv020@gmail.com"
+        git config --global user.name "AoEiuV020"
+
     - name: Maximize build space
       run: |
         sudo rm -rf /usr/share/dotnet
@@ -18,10 +29,6 @@ jobs:
         sudo rm -rf /opt/ghc
         sudo swapoff -a
         sudo rm -f /mnt/swapfile
-
-    - name: env
-      run: |
-        echo "PUSH_TOKEN=${{ secrets.PUSH_TOKEN }}" >> $GITHUB_ENV
 
     - name: depot
       run: |
