@@ -35,7 +35,7 @@ jobs:
         sudo apt-get update
         sudo apt-get install -y python openjdk-8-jdk-headless libncurses5 ccache
         sudo update-java-alternatives --set java-1.8.0-openjdk-amd64
-        git clone --depth 1 "https://github.com/AoEiuV020/src" src
+        git clone --depth 1 "https://github.com/$GITHUB_REPOSITORY" src
         cd src
         sudo bash install-build-deps.sh --no-chromeos-fonts
         build/linux/sysroot_scripts/install-sysroot.py --arch=i386
@@ -44,9 +44,12 @@ jobs:
         gclient runhooks
 
         echo out
-        mkdir out
+        mkdir -p out
         git clone https://github.com/AoEiuV020/kiwibrowser-arm64.git out/arm64
         gn gen out/arm64/
+
+        echo keeplive
+        touch /tmp/keepalive
     - name: Setup Debug Session
       env:   
         GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
